@@ -16,8 +16,7 @@ class HelloPython(plasmascript.Applet):
     def paintInterface(self, painter, option, rect):
         painter.save()
         painter.setPen(Qt.white)
-        painter.drawText(rect, Qt.AlignVCenter | Qt.AlignHCenter, "Hello 
-Python!")
+        painter.drawText(rect, Qt.AlignVCenter | Qt.AlignHCenter, "Hello Python!")
         painter.restore()
  
 def CreateApplet(parent):
