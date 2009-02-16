@@ -2,18 +2,27 @@
 # -*- coding: utf-8 -*-
 import urllib
 from configobj import ConfigObj
+import ConfigParser
+from ini import INIConfig
 # To change this template, choose Tools | Templates
 # and open the template in the editor.
 
 __author__="araygorodskiy"
 __date__ ="$04.02.2009 17:56:17$"
 def download_tracker_ini():
-#    file = urllib.urlopen("c",proxies=None);
+#    file = urllib.urlopen("http://re-tracker.ru/trackerssimple.ini",proxies=None);
 #    file2 = open("trackerssimple.ini","w")
 #    file2.write(file.read());
-    config = ConfigObj('trackerssimple-utf8.ini');
-    section = config['Город'];
-    kolvo = section['Количество'];
+    config = INIConfig(open('trackerssimple-utf8.ini'));
+    size = config["Город"]["Количество"];
+    for i in range(int(size)):
+        print config["Город"][str(i+1)];
+#    config = ConfigParser.ConfigParser()
+#    config.read('trackerssimple.ini')
+#    print config.sections();
+#    config = ConfigObj('trackerssimple.ini');
+#    section = config['Город'];
+#    kolvo = section['Количество'];
 #    try:
 #        retcode = subprocess.call("iconv"+" -f UTF16LE -t UTF8 trackerssimple.ini -o trackerssimple-utf8.ini",shell=True);
 #        if retcode < 0:
