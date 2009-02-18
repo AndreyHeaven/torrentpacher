@@ -1,0 +1,8 @@
+#!/bin/bash
+IN_NAME=trackerssimple.ini
+URL=http://re-tracker.ru/$IN_NAME
+OUT_NAME=trackerssimple-utf8.ini
+rm trackerssimple.ini
+wget $URL
+rm $OUT_NAME
+iconv -f UTF16LE -t UTF8 trackerssimple.ini -o $OUT_NAME
