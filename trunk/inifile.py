@@ -26,7 +26,7 @@ class INIFile:
         config = INIConfig(open(file_name));
         self.cites = {};
         size = config[GOROD][KOLVO];
-        for i in range(1, int(size)):
+        for i in range(1, int(size)+1):
             name = config[GOROD][str(i)]
             providers = self._get_providers(config, name);
 
@@ -36,7 +36,7 @@ class INIFile:
     def _get_providers(self, config, name):
         provs = {};
         size = config[PROVIDERS + name][KOLVO];
-        for i in range(1, int(size)):
+        for i in range(1, int(size)+1):
             name1 = config[PROVIDERS + name][str(i)];
             re_trackers = self._get_re_trackers(config, name, name1);
             provs[i] = Provider(name1, re_trackers)
@@ -45,7 +45,7 @@ class INIFile:
     def _get_re_trackers(self, config, city, provider):
         tr = {};
         size = config[RE_TRACKERS + city + " " + provider][KOLVO];
-        for i in range(1, int(size)):
+        for i in range(1, int(size)+1):
             url = config[RE_TRACKERS + city + " " + provider][str(i)];
             tr[i] = url;
         return tr;

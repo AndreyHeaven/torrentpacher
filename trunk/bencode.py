@@ -13,7 +13,16 @@ try:
 except ImportError:
     UnicodeType = None
 
-RETRACKER_URLS = ["http://10.202.44.166:2710/announce","http://10.202.43.53:2710/announce"]
+def add_URLs_to_torrent(torentfilenames, trackers):
+    for filename in torentfilenames:
+        r = bdecode(open(filename).read())
+
+        if not "announce-list" in r:
+            r["announce-list"] = [[r["announce"]]]
+        for url in trackers:
+            r["announce-list"].append([url])
+        r1 = bencode(r)
+        open(filename,"w").write(r1);
 
 def decode_int(x, f):
     f += 1
@@ -159,24 +168,4 @@ try:
 except ImportError:
     pass
 
-def usage():
-    print "Usage %s </path/to/torrents>" % sys.argv[0]
-    return  
 
-if __name__ == "__main__":
-    filename = ""
-    if len(sys.argv) >= 2:
-        filenames = sys.argv[1:]
-    else:
-        usage()
-        exit(1)
-    for filename in filenames: 
-        r = bdecode(open(filename).read())
-        try:
-            r["announce-list"].append([RETRACKER_URL])
-        except KeyError:
-            r["announce-list"] = [[r["announce"]]]
-            for url in RETRACKER_URLS:
-                r["announce-list"].append([url])
-        r1 = bencode(r)
-        open(filename,"w").write(r1)

@@ -2,7 +2,16 @@
 IN_NAME=trackerssimple.ini
 URL=http://re-tracker.ru/$IN_NAME
 OUT_NAME=trackerssimple-utf8.ini
-rm trackerssimple.ini
-wget $URL
-rm $OUT_NAME
-iconv -f UTF16LE -t UTF8 trackerssimple.ini -o $OUT_NAME
+APP=./torrentpatcher_cli.py
+WGET_OPT=""
+if [ -f $IN_NAME ]; then
+    WGET_OPT=$WGET_OPT" -N"
+fi
+if [ -f $OUT_NAME ]; then
+    rm $OUT_NAME
+fi
+wget $WGET_OPT $URL  && iconv -f UTF16 -t UTF8 $IN_NAME -o $OUT_NAME >> /dev/null
+if [ ! -x torrentpatcher_cli.py ];then
+    chmod +x $APP
+fi
+$APP $$
