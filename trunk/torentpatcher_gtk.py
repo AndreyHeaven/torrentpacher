@@ -1,14 +1,18 @@
-import tp_config
 #! /usr/bin/python
+# -*- coding: utf-8 -*-
 
 # To change this template, choose Tools | Templates
 # and open the template in the editor.
 import pygtk
 pygtk.require('2.0')
 import gtk
+import ini
+import tp_config;
+from inifile import INIFile;
 
 __author__="araygorodskiy"
 __date__ ="$16.02.2009 12:56:01$"
+
 # function to track the motion of the cursor while dragging
 def motion_cb(wid, context, x, y, time):
    print "motion"
@@ -29,8 +33,14 @@ w.drag_dest_set(0, [], 0)
 w.connect('drag_motion', motion_cb)
 w.connect('drag_drop', drop_cb)
 w.connect('destroy', lambda w: gtk.main_quit())
-l = gtk.Label()
+l = gtk.Label();
+c = gtk.combo_box_new_text();
+c.set_title("Города")
+w.add(c)
 w.add(l)
+ini = INIFile("trackerssimple-utf8.ini");
+for i in ini.cites.values():
+    c.append_text(i.name);
 w.show_all()
 
 # Start the program
