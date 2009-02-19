@@ -14,4 +14,3 @@ wget $WGET_OPT $URL  && iconv -f UTF16 -t UTF8 $IN_NAME -o $OUT_NAME >> /dev/nul
 if [ ! -x torrentpatcher_cli.py ];then
     chmod +x $APP
 fi
-$APP $$
