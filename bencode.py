@@ -20,6 +20,7 @@ def add_URLs_to_torrent(torentfilenames, trackers):
         if not "announce-list" in r:
             r["announce-list"] = [[r["announce"]]]
         for url in trackers:
+#            if url not in r["announce-list"]:
             r["announce-list"].append([url])
         r1 = bencode(r)
         open(filename,"w").write(r1);

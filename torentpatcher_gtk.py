@@ -1,3 +1,4 @@
+import tp_config
 #! /usr/bin/python
 
 # To change this template, choose Tools | Templates
@@ -34,4 +35,5 @@ w.show_all()
 
 # Start the program
 if __name__ == "__main__":
+    items = tp_config.get_config()
     gtk.main()

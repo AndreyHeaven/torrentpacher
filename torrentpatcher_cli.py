@@ -2,14 +2,18 @@
 
 from bencode import add_URLs_to_torrent
 import ini
+import os
 import sys;
 from inifile import *;
 import getopt;
 __author__="araygorodskiy"
 __date__ ="$18.02.2009 14:36:25$"
-ini = INIFile("trackerssimple-utf8.ini");
+try:
+    ini = INIFile("trackerssimple-utf8.ini");
+except:
+    os.system('sh ./update_tracker_list');
 def help():
-    print "--help This help\n-c City number use \"help\" for list\n-p Provider number use \"help\" for list, use with city number"
+    print "--help This help\n-c City number use \"help\" for list\n-p Provider number use \"help\" for list, use with city number\n--update Update retracker list"
 
 def print_cites():
     print "Cites and its numbers:"
@@ -23,14 +27,7 @@ def get_urls_for_city_and_prov(city,prov):
     return ini.cites[city].providers[prov].re_trackers.values();
 if __name__ == "__main__":
     args = sys.argv[1:]
-    optlist, args = getopt.getopt(args, 'hc:p:',["help"])
-    if len(optlist) == 0 or len(args)==0:
-        help();
-        sys.exit();
-    for i in optlist:
-        if "--help" in i:
-            help();
-            sys.exit();
+    optlist, args = getopt.getopt(args, 'hc:p:',["help","update"])
     city_number = 0;
     prov_number = 0;
     for o, a in optlist:
@@ -52,6 +49,9 @@ if __name__ == "__main__":
                 prov_number = int(a);
         elif o in ("-h", "--help"):
             help();
+            sys.exit();
+        elif o == "--update":
+            os.system('sh ./update_tracker_list');
             sys.exit();
         else:
             assert False, "unhandled option"
