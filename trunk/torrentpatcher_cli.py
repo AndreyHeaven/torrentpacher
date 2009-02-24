@@ -9,7 +9,7 @@ import getopt;
 __author__="araygorodskiy"
 __date__ ="$18.02.2009 14:36:25$"
 try:
-    ini = INIFile("trackerssimple-utf8.ini");
+    ini = INIFile();
 except:
     os.system('sh ./update_tracker_list');
 def help():
@@ -59,6 +59,19 @@ if __name__ == "__main__":
         print "Something wrong!!!"
         help();
         sys.exit(2);
+
+    for arg in args:
+        if not os.path.exists(arg):
+            print "%s not exists!" % arg
+            help();
+            sys.exit(2);
+        if os.path.isdir(arg):
+            args.remove(arg)
+            for f in os.listdir(arg):
+                name, ext = os.path.splitext(f)
+                if ext == ".torrent":
+                    args.append(os.path.join(arg, f))
+
 
     urls = get_urls_for_city_and_prov(city_number,prov_number);
     add_URLs_to_torrent(args,urls);

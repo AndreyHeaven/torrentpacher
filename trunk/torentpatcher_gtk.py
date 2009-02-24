@@ -38,7 +38,7 @@ c = gtk.combo_box_new_text();
 c.set_title("Города")
 w.add(c)
 w.add(l)
-ini = INIFile("trackerssimple-utf8.ini");
+ini = INIFile();
 for i in ini.cites.values():
     c.append_text(i.name);
 w.show_all()
