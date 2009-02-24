@@ -21,9 +21,9 @@ class City(object):
         self.name = name;
         self.providers = providers;
 
-class INIFile:
-    def __init__(self, file_name):
-        config = INIConfig(open(file_name));
+class INIFile(object):
+    def __init__(self):
+        config = INIConfig(open('trackerssimple-utf8.ini'));
         self.cites = {};
         size = config[GOROD][KOLVO];
         for i in range(1, int(size)+1):
