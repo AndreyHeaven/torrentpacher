@@ -33,6 +33,9 @@ class INIFile(object):
             city = City(name, providers);
             self.cites[i] = city
 
+    def get_urls_for_city_and_prov(self, city, prov):
+        return self.cites[city].providers[prov].re_trackers.values();
+
     def _get_providers(self, config, name):
         provs = {};
         size = config[PROVIDERS + name][KOLVO];
