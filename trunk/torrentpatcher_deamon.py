@@ -28,18 +28,20 @@ class Deamon(object):
                 args.append(os.path.join(self.from_dir, f))
         for torr in args:
             modif_time = os.stat(torr).st_mtime
+            #print(torr)
             if modif_time > self.last_update_time:
-                print "Update time = %s" % self.last_update_time
-                print "Accept %s" % torr
+                #print "Accept %s" % torr
                 urls = self.ini.get_urls_for_city_and_prov(self.city_number,self.prov_number);
                 bencode.add_URLs_to_torrent(args,urls,self.to_dir);
                 os.utime(torr, (time.time(),time.time()))
+            #else:
+                #print "Decline %s" % torr
 
     def repeat(self):
         while True:
-            self.last_update_time=time.time();
-            print "Update time = %s" % self.last_update_time
+            #print "Update time = %s" % self.last_update_time
             self.exec_transform()
+            self.last_update_time=time.time();
             sleep(1)
 
 

@@ -12,6 +12,8 @@ try:
     ini = INIFile();
 except:
     os.system('sh ./update_tracker_list');
+    ini = INIFile();
+
 def help():
     print "--help This help\n-c City number use \"help\" for list\n-p Provider number use \"help\" for list, use with city number\n--update Update retracker list"
 
