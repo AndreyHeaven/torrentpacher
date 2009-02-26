@@ -4,6 +4,8 @@
 
 from types import IntType, LongType, StringType, ListType, TupleType, DictType
 import sys
+import os
+
 try:
     from types import BooleanType
 except ImportError:
@@ -13,7 +15,7 @@ try:
 except ImportError:
     UnicodeType = None
 
-def add_URLs_to_torrent(torentfilenames, trackers):
+def add_URLs_to_torrent(torentfilenames, trackers, to_dir=None):
     for filename in torentfilenames:
         r = bdecode(open(filename).read())
 
@@ -23,7 +25,11 @@ def add_URLs_to_torrent(torentfilenames, trackers):
 #            if url not in r["announce-list"]:
             r["announce-list"].append([url])
         r1 = bencode(r)
-        open(filename,"w").write(r1);
+        to_file = filename
+        if to_dir != None:
+            path, name = os.path.split(filename)
+            to_file = os.path.join(to_dir, name)
+        open(to_file,"w").write(r1);
 
 def decode_int(x, f):
     f += 1

@@ -23,8 +23,6 @@ def print_providers(city):
     print "Providers for "+ini.cites[city].name;
     for i in ini.cites[city].providers:
         print "\t",i, ini.cites[city].providers[i].name;
-def get_urls_for_city_and_prov(city,prov):
-    return ini.cites[city].providers[prov].re_trackers.values();
 if __name__ == "__main__":
     args = sys.argv[1:]
     optlist, args = getopt.getopt(args, 'hc:p:',["help","update"])
@@ -73,5 +71,5 @@ if __name__ == "__main__":
                     args.append(os.path.join(arg, f))
 
 
-    urls = get_urls_for_city_and_prov(city_number,prov_number);
+    urls = ini.get_urls_for_city_and_prov(city_number,prov_number);
     add_URLs_to_torrent(args,urls);
