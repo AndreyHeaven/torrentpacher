@@ -19,11 +19,13 @@ def add_URLs_to_torrent(torentfilenames, trackers, to_dir=None):
     for filename in torentfilenames:
         r = bdecode(open(filename).read())
 
+        if not "announce" in r:
+            r["announce"] = trackers[0]
         if not "announce-list" in r:
             r["announce-list"] = [[r["announce"]]]
         for url in trackers:
-#            if url not in r["announce-list"]:
-            r["announce-list"].append([url])
+            if [url] not in r["announce-list"]:
+                r["announce-list"].append([url])
         r1 = bencode(r)
         to_file = filename
         if to_dir != None:
@@ -101,7 +103,10 @@ def bdecode(x, sloppy = 0):
     except (IndexError, KeyError, ValueError):
         raise ValueError, "bad bencoded data"
     if not sloppy and l != len(x):
-        raise ValueError, "bad bencoded data"
+        A = ['\n','\r']
+        for i in xrange(len(x),l):
+            if x[i] not in A:
+                raise ValueError, "bad bencoded data"
     return r
 
 
