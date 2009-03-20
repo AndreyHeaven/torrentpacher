@@ -59,7 +59,17 @@ if __name__ == "__main__":
         print "Something wrong!!!"
         help();
         sys.exit(2);
-
+#    for arg in args:
+#    if not os.path.exists(arg):
+#print "%s not exists!" % arg
+#help();
+#sys.exit(2);
+#if os.path.isdir(arg):
+#args.remove(arg)
+#for f in os.listdir(arg):
+#name, ext = os.path.splitext(f)
+#if ext == ".torrent":
+#args.append(os.path.join(arg, f))
     for arg in args:
         if not os.path.exists(arg):
             print "%s not exists!" % arg

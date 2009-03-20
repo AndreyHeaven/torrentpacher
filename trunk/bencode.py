@@ -1,19 +1,17 @@
-#!/usr/bin/python
-# Written by Petru Paler, Uoti Urpala, Ross Cohen and John Hoffman
-# see LICENSE.txt for license information
+# -*- coding: utf-8 -*-
+# The contents of this file are subject to the BitTorrent Open Source License
+# Version 1.1 (the License).  You may not copy or use this file, in either
+# source code or executable form, except in compliance with the License.  You
+# may obtain a copy of the License at http://www.bittorrent.com/license/.
+#
+# Software distributed under the License is distributed on an AS IS basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied.  See the License
+# for the specific language governing rights and limitations under the
+# License.
 
-from types import IntType, LongType, StringType, ListType, TupleType, DictType
-import sys
+# Written by Petru Paler
 import os
-
-try:
-    from types import BooleanType
-except ImportError:
-    BooleanType = None
-try:
-    from types import UnicodeType
-except ImportError:
-    UnicodeType = None
+from BTL import BTFailure
 
 def add_URLs_to_torrent(torentfilenames, trackers, to_dir=None):
     for filename in torentfilenames:
@@ -33,34 +31,25 @@ def add_URLs_to_torrent(torentfilenames, trackers, to_dir=None):
             to_file = os.path.join(to_dir, name)
         open(to_file,"w").write(r1);
 
+
 def decode_int(x, f):
     f += 1
     newf = x.index('e', f)
-    try:
-        n = int(x[f:newf])
-    except:
-        n = long(x[f:newf])
+    n = int(x[f:newf])
     if x[f] == '-':
         if x[f + 1] == '0':
             raise ValueError
     elif x[f] == '0' and newf != f+1:
         raise ValueError
     return (n, newf+1)
-  
+
 def decode_string(x, f):
     colon = x.index(':', f)
-    try:
-        n = int(x[f:colon])
-    except (OverflowError, ValueError):
-        n = long(x[f:colon])
+    n = int(x[f:colon])
     if x[f] == '0' and colon != f+1:
         raise ValueError
     colon += 1
     return (x[colon:colon+n], colon+n)
-
-def decode_unicode(x, f):
-    s, f = decode_string(x, f+1)
-    return (s.decode('UTF-8'), f)
 
 def decode_list(x, f):
     r, f = [], f+1
@@ -71,12 +60,8 @@ def decode_list(x, f):
 
 def decode_dict(x, f):
     r, f = {}, f+1
-    lastkey = None
     while x[f] != 'e':
         k, f = decode_string(x, f)
-        if lastkey >= k:
-            raise ValueError
-        lastkey = k
         r[k], f = decode_func[x[f]](x, f)
     return (r, f + 1)
 
@@ -94,55 +79,48 @@ decode_func['6'] = decode_string
 decode_func['7'] = decode_string
 decode_func['8'] = decode_string
 decode_func['9'] = decode_string
-#decode_func['u'] = decode_unicode
-  
-def bdecode(x, sloppy = 0):
+
+def bdecode(x):
     try:
         r, l = decode_func[x[0]](x, 0)
-#    except (IndexError, KeyError):
     except (IndexError, KeyError, ValueError):
-        raise ValueError, "bad bencoded data"
-    if not sloppy and l != len(x):
-        A = ['\n','\r']
-        for i in xrange(len(x),l):
-            if x[i] not in A:
-                raise ValueError, "bad bencoded data"
+        raise BTFailure("not a valid bencoded string")
+    if l != len(x):
+        raise BTFailure("invalid bencoded value (data after valid prefix)")
     return r
 
+from types import StringType, IntType, LongType, DictType, ListType, TupleType
 
-bencached_marker = []
 
-class Bencached:
+class Bencached(object):
+
+    __slots__ = ['bencoded']
+
     def __init__(self, s):
-        self.marker = bencached_marker
         self.bencoded = s
 
-BencachedType = type(Bencached('')) # insufficient, but good as a filter
-
-def encode_bencached(x, r):
-    assert x.marker == bencached_marker
+def encode_bencached(x,r):
     r.append(x.bencoded)
 
 def encode_int(x, r):
     r.extend(('i', str(x), 'e'))
 
 def encode_bool(x, r):
-    encode_int(int(x), r)
-
-def encode_string(x, r):    
+    if x:
+        encode_int(1, r)
+    else:
+        encode_int(0, r)
+        
+def encode_string(x, r):
     r.extend((str(len(x)), ':', x))
-
-def encode_unicode(x, r):
-    #r.append('u')
-    encode_string(x.encode('UTF-8'), r)
 
 def encode_list(x, r):
     r.append('l')
-    for e in x:
-        encode_func[type(e)](e, r)
+    for i in x:
+        encode_func[type(i)](i, r)
     r.append('e')
 
-def encode_dict(x, r):
+def encode_dict(x,r):
     r.append('d')
     ilist = x.items()
     ilist.sort()
@@ -152,32 +130,21 @@ def encode_dict(x, r):
     r.append('e')
 
 encode_func = {}
-encode_func[BencachedType] = encode_bencached
+encode_func[Bencached] = encode_bencached
 encode_func[IntType] = encode_int
 encode_func[LongType] = encode_int
 encode_func[StringType] = encode_string
 encode_func[ListType] = encode_list
 encode_func[TupleType] = encode_list
 encode_func[DictType] = encode_dict
-if BooleanType:
-    encode_func[BooleanType] = encode_bool
-if UnicodeType:
-    encode_func[UnicodeType] = encode_unicode
-    
-def bencode(x):
-    r = []
-    try:
-        encode_func[type(x)](x, r)
-    except:
-        print "*** error *** could not encode type %s (value: %s)" % (type(x), x)
-        assert 0
-    return ''.join(r)
 
 try:
-    import psyco
-    psyco.bind(bdecode)
-    psyco.bind(bencode)
+    from types import BooleanType
+    encode_func[BooleanType] = encode_bool
 except ImportError:
     pass
 
-
+def bencode(x):
+    r = []
+    encode_func[type(x)](x, r)
+    return ''.join(r)
